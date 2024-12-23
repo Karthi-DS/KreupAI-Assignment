@@ -7,10 +7,10 @@ const ClassSection = require('../models/classSection');
 
 const generateReportCard = async (req, res) => {
     try {
-        const { report_card_id } = req.params;
+        const { student_id } = req.params;
 
         const reportCard = await ReportCards.findOne({
-            where: { report_card_id },
+            where: { student_id },
             include: [
                 { model: StudentProfile, attributes: ['student_name'] },
                 { model: ClassSection, attributes: ['class_name', 'section'] }
@@ -35,7 +35,7 @@ const generateReportCard = async (req, res) => {
         const student = reportCard.StudentProfile;
         const classDetails = reportCard.ClassSection;
 
-        const filePath = path.join(__dirname, `../../report_card_${report_card_id}.pdf`);
+        const filePath = path.join(__dirname, `../../report_card_${student_id}.pdf`);
 
         const doc = new PDFDocument({ margin: 50 });
         const writeStream = fs.createWriteStream(filePath);
@@ -82,7 +82,7 @@ const generateReportCard = async (req, res) => {
         doc.end();
 
         writeStream.on('finish', () => {
-            res.download(filePath, `report_card_${report_card_id}.pdf`, (err) => {
+            res.download(filePath, `report_card_${student.student_name}.pdf`, (err) => {
                 if (err) throw err;
                 fs.unlinkSync(filePath);
             });
@@ -96,8 +96,8 @@ const generateReportCard = async (req, res) => {
 
 const addReport = async(req,res)=>{
     try {
-        const report = ReportCards.create(req.body)
-        res.status(200).json({"grades":grades})
+        const report = await ReportCards.create(req.body)
+        res.status(200).json(report)
     } catch (error) {
         console.error('Error in adding report:', error);
         res.status(500).json({ error: 'Failed to add report', details: error.message });

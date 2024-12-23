@@ -22,5 +22,4 @@ ExamGrades.belongsTo(StudentProfile, { foreignKey: 'student_id', onDelete: 'CASC
 ExamGrades.belongsTo(AcademicSubjects, { foreignKey: 'subject_id', onDelete: 'CASCADE' });
 ExamGrades.belongsTo(ExamTimetables, { foreignKey: 'timetable_id', onDelete: 'CASCADE' });
 ExamGrades.belongsTo(TeacherProfile, { foreignKey: 'finalized_by', onDelete: 'SET NULL' });
-
 module.exports = ExamGrades;
