@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 const Home = () => {
   const [studentData, setStudentData] = useState([]);
   const [showTable, setShowTable] = useState(true);
-  const [error, setError] = useState("");
   const inputRef = useRef(null);
   const navigate = useNavigate();
 
@@ -15,7 +15,7 @@ const Home = () => {
       setStudentData(response.data.data);
     } catch (error) {
       console.error("Error fetching student data:", error);
-      setError("Failed to load student data. Please try again later.");
+      toast.error("Failed to load student data. Please try again later.");
     }
   }
 
@@ -24,7 +24,7 @@ const Home = () => {
   }, []);
 
   const handleReport = async (studentId) => {
-    setError("")
+    
     const gradesLink = `http://localhost:4000/api/report-cards/${studentId}`;
     
     try {
@@ -37,13 +37,13 @@ const Home = () => {
       }
     } catch (err) {
       console.error("Error navigating to report card:", err);
-      setError("Failed to open the report card. Please add the report.");
+      toast.error("Failed to open the report card. Please add the report.");
     }
   };
   
 
   const deleteStudent = async (studentId) => {
-    setError("")
+    
     try {
       await axios.post("http://localhost:4000/api/delete-student", {
         student_id: studentId,
@@ -51,23 +51,30 @@ const Home = () => {
       setStudentData(studentData.filter((student) => student.student_id !== studentId));
     } catch (error) {
       console.error("Error deleting student:", error);
-      setError("Failed to delete student. Please try again later.");
+      toast.error("Failed to delete student. Please try again later.");
     }
   };
 
   const openGrades = (studentId,studentName) =>{
-    setError("")
+    
     navigate("/grades",{
       state:{studentId,studentName}
     })
   }
 
+  const openReport = (studentId) =>{
+    
+    navigate("/addReport",{
+      state:{studentId}
+    })
+  }
+
   const addStudent = async () => {
-    setError("");
+    ;
     const studentName = inputRef.current.value.trim();
 
     if (!studentName) {
-      setError("Student name cannot be empty.");
+      toast.error("Student name cannot be empty.");
       return;
     }
 
@@ -77,20 +84,24 @@ const Home = () => {
       });
 
       if (response.data.status) {
+        toast.success("Student Added Successfully.", {
+          position: "top-right",
+          autoClose: 2000,
+        });
         getStudents();
         inputRef.current.value = "";
       }
     } catch (error) {
       console.error("Error adding student:", error);
-      setError("Failed to add student. Please try again later.");
+      toast.error("Failed to add student. Please try again later.");
     }
   };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+      <ToastContainer/>
       <div className="w-full max-w-4xl bg-white shadow-md rounded-lg p-6">
         <h1 className="text-2xl font-semibold text-center mb-6">Student List</h1>
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
         {showTable ? (
           <div className="overflow-x-auto">
@@ -120,7 +131,7 @@ const Home = () => {
                           Get Report
                         </button>
                         <button
-                          onClick={() => navigate("/addReport")}
+                          onClick={() => openReport(student.student_id)}
                           className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 w-full sm:w-auto"
                         >
                           Add Report

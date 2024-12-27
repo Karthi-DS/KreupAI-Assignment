@@ -13,7 +13,6 @@ app.use(bodyParser.json());
 
 
 sequelize.sync({ force: false })
-    .then(() => console.log('Database synced'))
     .catch(err => console.error('Database sync failed:', err));
 
 app.use(cors({origin:"*"}))

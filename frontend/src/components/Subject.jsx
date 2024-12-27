@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { ToastContainer,toast } from "react-toastify";
 
 const SubjectPage = () => {
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [newSubject, setNewSubject] = useState("");
-  const [success, setSuccess] = useState(null);
+  // const [success, setSuccess] = useState(null);
 
   // Fetch subjects
   const fetchSubjects = async () => {
     setLoading(true);
-    setError(null);
+    toast.error(null);
     try {
       const response = await axios.get("http://localhost:4000/api/get-subjects");
       setSubjects(response.data.data);
     } catch (err) {
       console.error("Error fetching subjects:", err);
-      setError("Failed to load subjects. Please try again later.");
+      toast.error("Failed to load subjects. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -31,7 +31,7 @@ const SubjectPage = () => {
   const handleAddSubject = async (e) => {
     e.preventDefault();
     if (!newSubject.trim()) {
-      setError("Subject name cannot be empty.");
+      toast.error("Subject name cannot be empty.");
       return;
     }
 
@@ -40,15 +40,18 @@ const SubjectPage = () => {
         subject_name: newSubject,
       });
       if (response.data.status) {
-        setSuccess("Subject added successfully!");
+        toast.success("Subject Added Successfully.", {
+                  position: "top-right",
+                  autoClose: 2000,
+                });
         setNewSubject("");
         fetchSubjects(); // Refresh subjects
       } else {
-        setError("Failed to add subject. Please try again.");
+        toast.error("Failed to add subject. Please try again.");
       }
     } catch (err) {
       console.error("Error adding subject:", err);
-      setError("Failed to add subject. Please try again later.");
+      toast.error("Failed to add subject. Please try again later.");
     }
   };
 
@@ -56,9 +59,8 @@ const SubjectPage = () => {
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="w-full max-w-4xl bg-white shadow-md rounded-lg p-6">
         <h1 className="text-2xl font-semibold text-center mb-6">Subjects</h1>
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-        {success && <p className="text-green-500 text-center mb-4">{success}</p>}
-
+        {/* {success && <p className="text-green-500 text-center mb-4">{success}</p>} */}
+        <ToastContainer/>
         {/* Form to Add Subject */}
         <form onSubmit={handleAddSubject} className="mb-6">
           <div className="flex items-center gap-4">

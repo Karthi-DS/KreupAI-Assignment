@@ -28,7 +28,6 @@ ReportCards.belongsTo(ClassSection, { foreignKey: 'class_id', onDelete: 'CASCADE
 
 ReportCards.afterCreate(async (reportCard, options) => {
     try {
-        console.log('Processing afterCreate hook for report card...');
 
         const subjectGrades = reportCard.subject_grades;
 
@@ -44,7 +43,6 @@ ReportCards.afterCreate(async (reportCard, options) => {
             return map;
         }, {});
 
-        console.log('Fetched subjects:', subjectMap);
 
         // Extract finalized_by and timetable_id from options
         const { finalized_by, timetable_id } = options;
@@ -69,11 +67,9 @@ ReportCards.afterCreate(async (reportCard, options) => {
             };
         });
 
-        console.log('Grade entries to insert:', gradeEntries);
 
         // Bulk insert exam grades
         await ExamGrades.bulkCreate(gradeEntries);
-        console.log('Exam grades created successfully for the report card.');
     } catch (error) {
         console.error('Error creating exam grades:', error.message, error.stack);
     }

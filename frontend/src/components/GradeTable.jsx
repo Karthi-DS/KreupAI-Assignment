@@ -2,11 +2,11 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
+import { ToastContainer,toast } from "react-toastify";
 
 const GradeTable = () => {
   const [grades, setGrades] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [subjectsList, setSubjectsList] = useState({});
   const [studentsList, setStudentsList] = useState({});
   const location = useLocation();
@@ -29,7 +29,7 @@ const GradeTable = () => {
       }
     } catch (error) {
       console.error("Error fetching in subjects:", error);
-      setError("Failed to load subject data. Please try again later.");
+      toast.error("Failed to load subject data. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -49,11 +49,10 @@ const GradeTable = () => {
         },
         {}
       );
-      console.log(subjects);
       setSubjectsList(subjects)
     } catch (error) {
       console.error("Error fetching in subjects:", error);
-      setError("Failed to load subject data. Please try again later.");
+      toast.error("Failed to load subject data. Please try again later.");
     }
   }
   async function getStudents() {
@@ -68,19 +67,18 @@ const GradeTable = () => {
         },
         {}
       );
-      console.log(students);
       setStudentsList(students)
     } catch (error) {
       console.error("Error fetching in subjects:", error);
-      setError("Failed to load subject data. Please try again later.");
+      toast.error("Failed to load grade data. Please try again later.");
     }
   }
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
+      <ToastContainer/>
       <div className="w-full max-w-4xl bg-white shadow-md rounded-lg p-6">
       <h1 className="text-2xl font-semibold text-center mb-6">{studentId?studentName+" - Grades":"Grades"}</h1>
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-        {grades.length === 0 && !loading && !error ?  (
+        {grades.length === 0 && !loading?  (
           <div className="text-gray-500 text-center mb-4">No data Found</div>
         ) : (
           <table className="table-auto w-full border-collapse border border-gray-300 text-sm md:text-base">

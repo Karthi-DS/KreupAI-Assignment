@@ -20,7 +20,6 @@ const getStudents = async (req,res) =>{
 
 const deleteStudent = async (req,res) =>{
     try {
-        console.log(req.body)
         const student = await StudentProfile.destroy({where:{student_id:req.body.student_id}})
         res.status(200).json({status:true,data:student});
     } catch (err) {
