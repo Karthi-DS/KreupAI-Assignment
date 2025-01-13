@@ -79,7 +79,7 @@ const GradeTable = () => {
       <div className="w-full max-w-4xl bg-white shadow-md rounded-lg p-6">
       <h1 className="text-2xl font-semibold text-center mb-6">{studentId?studentName+" - Grades":"Grades"}</h1>
         {grades.length === 0 && !loading?  (
-          <div className="text-gray-500 text-center mb-4">No data Found</div>
+          <div className="text-gray-500 text-center mb-4">No data were Found</div>
         ) : (
           <table className="table-auto w-full border-collapse border border-gray-300 text-sm md:text-base">
             <thead>
