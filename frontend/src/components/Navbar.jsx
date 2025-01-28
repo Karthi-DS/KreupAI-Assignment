@@ -9,7 +9,7 @@ const Navbar = () => {
       <div className="container mx-auto flex items-center justify-between px-4 py-3">
 
         <Link to="/" className="text-lg font-semibold">
-          School System
+          School System Management
         </Link>
         <div className="flex items-center gap-6">
           <Link
