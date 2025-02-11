@@ -35,12 +35,11 @@ const generateReportCard = async (req, res) => {
         const student = reportCard.StudentProfile;
         const classDetails = reportCard.ClassSection;
 
-        const filePath = path.join(__dirname, `../../report_card_${student_id}.pdf`);
+        res.setHeader('Content-Disposition', `attachment; filename=report_card_${student.student_name}.pdf`);
+        res.setHeader('Content-Type', 'application/pdf');
 
         const doc = new PDFDocument({ margin: 50 });
-        const writeStream = fs.createWriteStream(filePath);
-        doc.pipe(writeStream);
-        res.setHeader('Content-Type', 'application/pdf');
+        doc.pipe(res); // Directly pipe to response
 
         doc.fontSize(20).text(`${student.student_name} - Report Card`, { align: 'center' });
         doc.moveDown(1);
@@ -68,8 +67,8 @@ const generateReportCard = async (req, res) => {
 
         doc.moveDown(1);
         doc.fontSize(12)
-            .text(`Total Marks Obtained: ${total_marks_obtained}`, { continued: false })
-            .text(`Total Maximum Marks: ${total_maximum_marks}`, { continued: false })
+            .text(`Total Marks Obtained: ${total_marks_obtained}`)
+            .text(`Total Maximum Marks: ${total_maximum_marks}`)
             .text(`Overall Grade: ${overall_grade}`)
             .moveDown(1);
 
@@ -80,19 +79,12 @@ const generateReportCard = async (req, res) => {
         doc.fontSize(10).text(`Generated on: ${new Date(generated_date).toLocaleString()}`, { align: 'right' });
 
         doc.end();
-
-        writeStream.on('finish', () => {
-            res.download(filePath, `report_card_${student.student_name}.pdf`, (err) => {
-                if (err) throw err;
-                fs.unlinkSync(filePath);
-            });
-        });
-
     } catch (error) {
         console.error('Error generating report card PDF:', error);
         res.status(500).json({ error: 'Failed to generate PDF', details: error.message });
     }
 };
+
 
 const addReport = async(req,res)=>{
     try {
